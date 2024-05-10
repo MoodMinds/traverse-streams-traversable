@@ -41,16 +41,19 @@ public abstract class StreamTraversable<V, E extends Exception> implements Trave
     @Override
     public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
 
-        Set<Throwable> thrown = method.isSequence() ? new HashSet<>() : synchronizedSet(new HashSet<>());
+        Set<Throwable> thrown = null;
 
         try (BaseStream<V, ?> stream = method.isSequence() ? stream(method, ctx).sequential()
                 : method.isParallel() ? stream(method, ctx).parallel() : stream(method, ctx)) {
+
+            thrown = stream.isParallel() ? synchronizedSet(new HashSet<>()) : new HashSet<>();
 
             return stream.isParallel() ? parallel(stream.spliterator(), traverse, thrown::add)
                     : sequence(stream.spliterator(), traverse, thrown::add);
 
         } catch (Throwable caught) {
-            Throwable cause = caught.getCause(); return sneak(thrown.contains(cause) ? cause : caught);
+            Throwable cause = caught.getCause(); return sneak(thrown != null
+                    && thrown.contains(cause) ? cause : caught);
         }
     }
 
