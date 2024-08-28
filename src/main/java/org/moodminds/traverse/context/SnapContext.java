@@ -6,23 +6,19 @@ import org.moodminds.elemental.Container;
 import org.moodminds.elemental.EmptyIterator;
 import org.moodminds.elemental.KeyValue;
 import org.moodminds.elemental.SingleIterator;
-import org.moodminds.elemental.WrapIterator;
 import org.moodminds.elemental.WrapKeyValue;
-import org.moodminds.elemental.WrapSpliterator;
-import org.moodminds.sneaky.Cast;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Spliterator;
 
 import static java.lang.Math.max;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
-import static java.util.Spliterator.IMMUTABLE;
 import static org.moodminds.elemental.ArraySequence.sequence;
 import static org.moodminds.elemental.Pair.pair;
+import static org.moodminds.sneaky.Cast.cast;
 
 /**
  * Implementation of the {@link Association} context, representing a context variables snapshot.
@@ -70,9 +66,9 @@ public class SnapContext extends AbstractMapAssociation<Object, Object,
      * @param context the given {@link Container} of {@link KeyValue} parent context
      */
     private SnapContext(Container<? extends KeyValue<?, ?>> context) {
-        super(new LinkedHashMap<>(max((int) (context.size()/.75f) + 1, 16))); context.stream().forEach(kv -> map.put(
-                requireNonNull(kv.getKey(), "Key cannot be null."),
-                requireNonNull(kv.getValue(), "Value cannot be null.")));
+        super(new LinkedHashMap<>(max((int) (context.size()/.75f) + 1, 16))); context.stream().forEach(entry -> map.put(
+                requireNonNull(entry.getKey(), "Key cannot be null."),
+                requireNonNull(entry.getValue(), "Value cannot be null.")));
     }
 
     /**
@@ -94,47 +90,6 @@ public class SnapContext extends AbstractMapAssociation<Object, Object,
     /**
      * {@inheritDoc}
      *
-     * @return {@inheritDoc}
-     */
-    @Override
-    public Container<Object> keys() {
-        return new SnapKeysContainer();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     */
-    @Override
-    public Container<Object> values() {
-        return new SnapValuesContainer();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     */
-    @Override
-    public Iterator<KeyValue<Object, Object>> iterator() {
-        return WrapIterator.wrap(map.entrySet().iterator(), WrapKeyValue::wrap);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     */
-    @Override
-    public Spliterator<KeyValue<Object, Object>> spliterator() {
-        return WrapSpliterator.wrap(map.entrySet().spliterator(), Cast::cast,
-                WrapKeyValue::wrap, ch -> ch | IMMUTABLE);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @param key {@inheritDoc}
      * @param value {@inheritDoc}
      * @param hasEntry {@inheritDoc}
@@ -146,25 +101,26 @@ public class SnapContext extends AbstractMapAssociation<Object, Object,
     }
 
     /**
-     * Snap Context keys Container.
+     * {@inheritDoc}
+     *
+     * @param entry {@inheritDoc}
+     * @return {@inheritDoc}
      */
-    protected class SnapKeysContainer extends AbstractKeysContainer {
-
-        @Override public Spliterator<Object> spliterator() {
-            return WrapSpliterator.wrap(SnapContext.this.map.keySet().spliterator(),
-                    ch -> ch | IMMUTABLE); }
+    @Override
+    protected KeyValue<Object, Object> entry(Map.Entry<Object, Object> entry) {
+        return WrapKeyValue.wrap(entry);
     }
 
     /**
-     * Snap Context values Container.
+     * {@inheritDoc}
+     *
+     * @param entry {@inheritDoc}
+     * @return {@inheritDoc}
      */
-    protected class SnapValuesContainer extends AbstractValuesContainer {
-
-        @Override public Spliterator<Object> spliterator() {
-            return WrapSpliterator.wrap(SnapContext.this.map.values().spliterator(),
-                    ch -> ch | IMMUTABLE); }
+    @Override
+    protected Map.Entry<Object, Object> entry(KeyValue<Object, Object> entry) {
+        return cast(entry);
     }
-
 
     /**
      * Return new {@link SnapContext} by the given {@link KeyValue} vararg context.
@@ -184,7 +140,7 @@ public class SnapContext extends AbstractMapAssociation<Object, Object,
      * @param value the given adding value
      * @return new {@link SnapContext} by the given parent context and adding key and value
      */
-    public static SnapContext context(Association<Object, Object, ?> context, Object key, Object value) {
+    public static SnapContext context(Association<?, ?, ?> context, Object key, Object value) {
         return new SnapContext(context, key, value);
     }
 
@@ -195,7 +151,7 @@ public class SnapContext extends AbstractMapAssociation<Object, Object,
      * @param removeKey the given remove key
      * @return new {@link SnapContext} by the given parent context and removal key
      */
-    public static SnapContext context(Association<Object, Object, ?> context, Object removeKey) {
+    public static SnapContext context(Association<?, ?, ?> context, Object removeKey) {
         return new SnapContext(context, removeKey);
     }
 }

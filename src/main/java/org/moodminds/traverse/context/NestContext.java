@@ -7,6 +7,7 @@ import org.moodminds.elemental.EmptyIterator;
 import org.moodminds.elemental.KeyValue;
 import org.moodminds.elemental.RandomMatch;
 import org.moodminds.elemental.SingleIterator;
+import org.moodminds.sneaky.Cast;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -16,13 +17,9 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
-import static java.util.Spliterator.DISTINCT;
-import static java.util.Spliterator.IMMUTABLE;
-import static java.util.function.Function.identity;
 import static java.util.stream.Stream.concat;
 import static java.util.stream.Stream.of;
 import static org.moodminds.elemental.Pair.pair;
-import static org.moodminds.elemental.WrapSpliterator.wrap;
 import static org.moodminds.sneaky.Cast.cast;
 
 /**
@@ -62,7 +59,7 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
      * @param key the given adding key
      * @param value the given adding value
      */
-    public NestContext(Association<Object, Object, ?> context, Object key, Object value) {
+    public NestContext(Association<?, ?, ?> context, Object key, Object value) {
         this.delta = new Add(context, key, value);
     }
 
@@ -72,7 +69,7 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
      * @param context the given parent context
      * @param removeKey the given remove key
      */
-    public NestContext(Association<Object, Object, ?> context, Object removeKey) {
+    public NestContext(Association<?, ?, ?> context, Object removeKey) {
         this.delta = new Remove(context, removeKey);
     }
 
@@ -84,11 +81,11 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
 
         private static final long serialVersionUID = 2634109493516195575L;
 
-        protected final Association<Object, Object, ?> parent;
+        protected final Association<?, ?, ?> parent;
 
         protected final Object key;
 
-        Delta(Association<Object, Object, ?> parent, Object key) {
+        Delta(Association<?, ?, ?> parent, Object key) {
             this.parent = requireNonNull(parent); this.key = requireNonNull(key);
         }
 
@@ -99,10 +96,10 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
         abstract boolean contains(Object key);
 
         Stream<KeyValue<Object, Object>> stream() {
-            return stream(parent.stream().filter(kv -> !this.key.equals(kv.getKey()))).map(identity());
+            return stream(parent.stream().filter(entry -> !this.key.equals(entry.getKey()))).map(Cast::cast);
         }
 
-        abstract Stream<? extends KeyValue<Object, Object>> stream(Stream<? extends KeyValue<Object, Object>> stream);
+        abstract Stream<? extends KeyValue<?, ?>> stream(Stream<? extends KeyValue<?, ?>> stream);
     }
 
     /**
@@ -114,7 +111,7 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
 
         protected final Object value;
 
-        Add(Association<Object, Object, ?> parent, Object key, Object value) {
+        Add(Association<?, ?, ?> parent, Object key, Object value) {
             super(parent, key); this.value = requireNonNull(value);
         }
 
@@ -124,7 +121,7 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
             return cast(this.key.equals(key) ? value : parent.get(key)); }
         @Override boolean contains(Object key) {
             return this.key.equals(key) || parent.containsKey(key); }
-        @Override Stream<? extends KeyValue<Object, Object>> stream(Stream<? extends KeyValue<Object, Object>> stream) {
+        @Override Stream<? extends KeyValue<?, ?>> stream(Stream<? extends KeyValue<?, ?>> stream) {
             return concat(stream, of(pair(key, value))); }
     }
 
@@ -135,7 +132,7 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
 
         private static final long serialVersionUID = 2039980157143939910L;
 
-        Remove(Association<Object, Object, ?> parent, Object key) {
+        Remove(Association<?, ?, ?> parent, Object key) {
             super(parent, key);
         }
 
@@ -147,7 +144,7 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
             return cast(parent.get(key)); }
         @Override boolean contains(Object key) {
             return !this.key.equals(key) && parent.containsKey(key); }
-        @Override Stream<? extends KeyValue<Object, Object>> stream(Stream<? extends KeyValue<Object, Object>> stream) {
+        @Override Stream<? extends KeyValue<?, ?>> stream(Stream<? extends KeyValue<?, ?>> stream) {
             return stream; }
     }
 
@@ -198,7 +195,7 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
      */
     @Override
     public Container<Object> keys() {
-        return new NestKeysContainer();
+        return new KeysContainer();
     }
 
     /**
@@ -208,7 +205,7 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
      */
     @Override
     public Container<Object> values() {
-        return new NestValuesContainer();
+        return new ValuesContainer();
     }
 
     /**
@@ -268,21 +265,19 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
     /**
      * Nest Context keys Container.
      */
-    protected class NestKeysContainer extends AbstractKeysContainer {
+    protected class KeysContainer extends AbstractKeysContainer {
 
         @Override public Spliterator<Object> spliterator() {
-            return wrap(NestContext.this.stream().map(KeyValue::getKey).spliterator(),
-                    ch -> ch | IMMUTABLE | DISTINCT); }
+            return NestContext.this.stream().parallel().map(KeyValue::getKey).spliterator(); }
     }
 
     /**
      * Nest Context values Container.
      */
-    protected class NestValuesContainer extends AbstractValuesContainer {
+    protected class ValuesContainer extends AbstractValuesContainer {
 
         @Override public Spliterator<Object> spliterator() {
-            return wrap(NestContext.this.stream().map(KeyValue::getValue).spliterator(),
-                    ch -> ch | IMMUTABLE); }
+            return NestContext.this.stream().parallel().map(KeyValue::getValue).spliterator(); }
     }
 
 
@@ -305,7 +300,7 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
          * @param key the given adding key
          * @param value the given adding value
          */
-        public RandomMatchContext(Association<Object, Object, ?> context, Object key, Object value) {
+        public RandomMatchContext(Association<?, ?, ?> context, Object key, Object value) {
             super(random(context), key, value);
         }
 
@@ -315,18 +310,17 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
          * @param context the given parent context
          * @param removeKey the given remove key
          */
-        public RandomMatchContext(Association<Object, Object, ?> context, Object removeKey) {
+        public RandomMatchContext(Association<?, ?, ?> context, Object removeKey) {
             super(random(context), removeKey);
         }
 
         @Override public Container<Object> keys() {
-            return new RandomMatchKeysContainer(); }
+            return new KeysContainer(); }
 
         /**
-         * {@link RandomMatch} {@link NestKeysContainer} implementation.
+         * {@link RandomMatch} {@link KeysContainer} implementation.
          */
-        protected class RandomMatchKeysContainer extends NestKeysContainer
-                implements RandomMatch {}
+        protected class KeysContainer extends NestContext.KeysContainer implements RandomMatch {}
 
         /**
          * Assert the specified {@link Association} context is instance of {@link RandomMatch} and return.
@@ -334,7 +328,7 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
          * @param context the specified {@link Association} context
          * @return the specified {@link Association} context if it is an instance of {@link RandomMatch}
          */
-        private static Association<Object, Object, ?> random(Association<Object, Object, ?> context) {
+        private static Association<?, ?, ?> random(Association<?, ?, ?> context) {
             if (context instanceof RandomMatch) return context;
             throw new IllegalArgumentException("The specified context is not an instance of RandomMatch interface.");
         }
@@ -357,7 +351,7 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
      * @param value the given adding value
      * @return new {@link NestContext} by the given parent context and adding key and value
      */
-    public static NestContext context(Association<Object, Object, ?> context, Object key, Object value) {
+    public static NestContext context(Association<?, ?, ?> context, Object key, Object value) {
         return context instanceof RandomMatch ? new RandomMatchContext(context, key, value)
                 : new NestContext(context, key, value);
     }
@@ -369,7 +363,7 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
      * @param removeKey the given remove key
      * @return new {@link NestContext} by the given parent context and removal key
      */
-    public static NestContext context(Association<Object, Object, ?> context, Object removeKey) {
+    public static NestContext context(Association<?, ?, ?> context, Object removeKey) {
         return context instanceof RandomMatch ? new RandomMatchContext(context, removeKey)
                 : new NestContext(context, removeKey);
     }

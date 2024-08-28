@@ -43,7 +43,7 @@ public abstract class CatchTraversable<V, C extends Exception, E extends Excepti
     }
 
     @Override
-    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
         return traverse(new Traversal<V, E>() {
             @Override
             public <X1 extends Exception, X2 extends Exception> boolean handle(Testable1Throwing3<? super Throwable, ? extends E, ? extends X1, ? extends X2> catcher) throws E, X1, X2 {
@@ -106,7 +106,7 @@ public abstract class CatchTraversable<V, C extends Exception, E extends Excepti
         }, method, traverse, ctx);
     }
 
-    protected abstract <H1 extends Exception, H2 extends Exception> boolean traverse(Traversal<V, E> traversal, TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2;
+    protected abstract <H1 extends Exception, H2 extends Exception> boolean traverse(Traversal<V, E> traversal, TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2;
 
 
     /**
@@ -148,7 +148,7 @@ public abstract class CatchTraversable<V, C extends Exception, E extends Excepti
         }
 
         @Override
-        protected <H1 extends Exception, H2 extends Exception> boolean traverse(Traversal<V, E> traversal, TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+        protected <H1 extends Exception, H2 extends Exception> boolean traverse(Traversal<V, E> traversal, TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
 
             boolean result; TestableThrowing1<? extends E> retrial = retrial(); Boolean retry = var(false);
 
@@ -180,7 +180,7 @@ public abstract class CatchTraversable<V, C extends Exception, E extends Excepti
     public static <V, E extends Exception> Traversable<V, E> resume(TraverseSupport<? extends V, ?> traversable,
                                                                     Evaluable1Throwing1<? super Throwable, ? extends TraverseSupport<? extends V, ? extends E>, ? extends E> handler) {
         requireNonNull(handler); return new CatchTraversable<V, Exception, E>(traversable) {
-            @Override protected <H1 extends Exception, H2 extends Exception> boolean traverse(Traversal<V, E> traversal, TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+            @Override protected <H1 extends Exception, H2 extends Exception> boolean traverse(Traversal<V, E> traversal, TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
                 return traversal.<H1, H2>handle(caught -> method.traverse(handler.eval(caught), traverse, ctx)); }
         };
     }

@@ -47,7 +47,7 @@ public class FlattenTraversable<S, V, E extends Exception> implements Traversabl
     }
 
     @Override
-    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
 
         return method.<S, E, E, H1, H2>traverse(traversable, traverse.complete(traverser()) ? method.isSequence()
 

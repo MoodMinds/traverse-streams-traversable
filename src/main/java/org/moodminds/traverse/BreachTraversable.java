@@ -31,12 +31,12 @@ abstract class BreachTraversable<V, E extends Exception> implements Traversable<
     }
 
     @Override
-    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
         Boolean breached = var(false); return this.<H1, H2>traverse(method, traversable, traverser -> {
             if (!traverse.complete(traverser)) breached.flg = true;
         }, ctx) || !breached.flg;
     }
 
     protected abstract <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, TraverseSupport<? extends V, ? extends E> traversable,
-                                                                                     Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2;
+                                                                                     Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2;
 }

@@ -34,7 +34,7 @@ public class EffectTraversable<V, E extends Exception> extends StreamTraversable
     }
 
     @Override
-    protected Stream<V> stream(TraverseMethod method, Association<Object, Object, ?> ctx) throws E {
+    protected Stream<V> stream(TraverseMethod method, Association<?, ?, ?> ctx) throws E {
         return Stream.of(executable).<V>map(e -> {
             try { e.exec(); return null; }
             catch (Exception ex) { return sneak(ex); }

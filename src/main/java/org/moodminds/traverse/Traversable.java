@@ -83,7 +83,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws E                    in case of the traversal error
      * @throws NullPointerException if the specified {@link Association} contains {@code null} keys or values
      */
-    default void sequence(Association<Object, Object, ?> ctx) throws E {
+    default void sequence(Association<?, ?, ?> ctx) throws E {
         sequence(each(idle()), ctx);
     }
 
@@ -121,7 +121,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the specified {@link Collector} collector is {@code null}
      *                              or {@link Association} contains {@code null} keys or values
      */
-    default <R> R sequence(Collector<? super V, ?, ? extends R> collector, Association<Object, Object, ?> ctx) throws E {
+    default <R> R sequence(Collector<? super V, ?, ? extends R> collector, Association<?, ?, ?> ctx) throws E {
         return this.<R, RuntimeException>sequence(reduce(collector), ctx);
     }
 
@@ -163,7 +163,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the specified {@link Resolver} resolver is {@code null}
      *                              or {@link Association} contains {@code null} keys or values
      */
-    default <R, H extends Exception> R sequence(Resolver<? super V, E, ? extends R, ? extends H> resolver, Association<Object, Object, ?> ctx) throws E, H {
+    default <R, H extends Exception> R sequence(Resolver<? super V, E, ? extends R, ? extends H> resolver, Association<?, ?, ?> ctx) throws E, H {
         return resolver.resolve(SEQUENCE, this, ctx);
     }
 
@@ -203,7 +203,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the specified traverse function is {@code null} or {@link Association}
      *                              contains {@code null} keys or values
      */
-    default <H extends Exception> boolean sequence(Traverse<V, E, ? extends E, ? extends H> traverse, Association<Object, Object, ?> ctx) throws E, H {
+    default <H extends Exception> boolean sequence(Traverse<V, E, ? extends E, ? extends H> traverse, Association<?, ?, ?> ctx) throws E, H {
         return this.<E, H>traverse(SEQUENCE, traverse, ctx);
     }
 
@@ -234,7 +234,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws E                    in case of the traversal error
      * @throws NullPointerException if the specified {@link Association} contains {@code null} keys or values
      */
-    default void traverse(Association<Object, Object, ?> ctx) throws E {
+    default void traverse(Association<?, ?, ?> ctx) throws E {
         traverse(each(idle()), ctx);
     }
 
@@ -272,7 +272,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the specified {@link Collector} collector is {@code null}
      *                              or {@link Association} contains {@code null} keys or values
      */
-    default <R> R traverse(Collector<? super V, ?, ? extends R> collector, Association<Object, Object, ?> ctx) throws E {
+    default <R> R traverse(Collector<? super V, ?, ? extends R> collector, Association<?, ?, ?> ctx) throws E {
         return this.<R, RuntimeException>traverse(reduce(collector), ctx);
     }
 
@@ -314,7 +314,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the specified {@link Resolver} resolver is {@code null}
      *                              or {@link Association} contains {@code null} keys or values
      */
-    default <R, H extends Exception> R traverse(Resolver<? super V, E, ? extends R, ? extends H> resolver, Association<Object, Object, ?> ctx) throws E, H {
+    default <R, H extends Exception> R traverse(Resolver<? super V, E, ? extends R, ? extends H> resolver, Association<?, ?, ?> ctx) throws E, H {
         return resolver.resolve(TRAVERSE, this, ctx);
     }
 
@@ -354,7 +354,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the specified traverse function is {@code null} or {@link Association}
      *                              contains {@code null} keys or values
      */
-    default <H extends Exception> boolean traverse(Traverse<V, E, ? extends E, ? extends H> traverse, Association<Object, Object, ?> ctx) throws E, H {
+    default <H extends Exception> boolean traverse(Traverse<V, E, ? extends E, ? extends H> traverse, Association<?, ?, ?> ctx) throws E, H {
         return this.<E, H>traverse(TRAVERSE, traverse, ctx);
     }
 
@@ -385,7 +385,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws E                    in case of the traversal error
      * @throws NullPointerException if the specified {@link Association} contains {@code null} keys or values
      */
-    default void parallel(Association<Object, Object, ?> ctx) throws E {
+    default void parallel(Association<?, ?, ?> ctx) throws E {
         parallel(each(idle()), ctx);
     }
 
@@ -423,7 +423,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the specified {@link Collector} collector is {@code null}
      *                              or {@link Association} contains {@code null} keys or values
      */
-    default <R> R parallel(Collector<? super V, ?, ? extends R> collector, Association<Object, Object, ?> ctx) throws E {
+    default <R> R parallel(Collector<? super V, ?, ? extends R> collector, Association<?, ?, ?> ctx) throws E {
         return this.<R, RuntimeException>parallel(reduce(collector), ctx);
     }
 
@@ -465,7 +465,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the specified {@link Resolver} resolver is {@code null}
      *                              or {@link Association} contains {@code null} keys or values
      */
-    default <R, H extends Exception> R parallel(Resolver<? super V, E, ? extends R, ? extends H> resolver, Association<Object, Object, ?> ctx) throws E, H {
+    default <R, H extends Exception> R parallel(Resolver<? super V, E, ? extends R, ? extends H> resolver, Association<?, ?, ?> ctx) throws E, H {
         return resolver.resolve(PARALLEL, this, ctx);
     }
 
@@ -506,7 +506,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the specified traverse function is {@code null} or {@link Association}
      *                              contains {@code null} keys or values
      */
-    default <H extends Exception> boolean parallel(Traverse<V, E, ? extends E, ? extends H> traverse, Association<Object, Object, ?> ctx) throws E, H {
+    default <H extends Exception> boolean parallel(Traverse<V, E, ? extends E, ? extends H> traverse, Association<?, ?, ?> ctx) throws E, H {
         return this.<E, H>traverse(PARALLEL, traverse, ctx);
     }
 
@@ -542,7 +542,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException {@inheritDoc}
      */
     @Override
-    default <H1 extends Exception, H2 extends Exception> boolean sequence(Executable1Throwing2<? super TraverseSupport.Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+    default <H1 extends Exception, H2 extends Exception> boolean sequence(Executable1Throwing2<? super TraverseSupport.Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
         return this.<H1, H2>traverse(SEQUENCE, traverse::exec, ctx);
     }
 
@@ -578,7 +578,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException {@inheritDoc}
      */
     @Override
-    default <H1 extends Exception, H2 extends Exception> boolean traverse(Executable1Throwing2<? super TraverseSupport.Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+    default <H1 extends Exception, H2 extends Exception> boolean traverse(Executable1Throwing2<? super TraverseSupport.Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
         return this.<H1, H2>traverse(TRAVERSE, traverse::exec, ctx);
     }
 
@@ -614,7 +614,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException {@inheritDoc}
      */
     @Override
-    default <H1 extends Exception, H2 extends Exception> boolean parallel(Executable1Throwing2<? super TraverseSupport.Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+    default <H1 extends Exception, H2 extends Exception> boolean parallel(Executable1Throwing2<? super TraverseSupport.Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
         return this.<H1, H2>traverse(PARALLEL, traverse::exec, ctx);
     }
 
@@ -661,7 +661,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the specified traverse method or traverse function is {@code null}
      *                              or {@link Association} contains {@code null} keys or values
      */
-    <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2;
+    <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2;
 
 
     /**
@@ -699,7 +699,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException {@inheritDoc}
      */
     @Override
-    default <H1 extends Exception, H2 extends Exception, H3 extends Exception> boolean sequence(Executable1Throwing3<? super TraverseSupport.Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2, ? extends H3> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2, H3 {
+    default <H1 extends Exception, H2 extends Exception, H3 extends Exception> boolean sequence(Executable1Throwing3<? super TraverseSupport.Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2, ? extends H3> traverse, Association<?, ?, ?> ctx) throws E, H1, H2, H3 {
         try { return traverse(SEQUENCE, traverse::exec, ctx); } catch (Exception ex) { return sneak(ex); } }
 
     /**
@@ -737,7 +737,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException {@inheritDoc}
      */
     @Override
-    default <H1 extends Exception, H2 extends Exception, H3 extends Exception> boolean traverse(Executable1Throwing3<? super TraverseSupport.Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2, ? extends H3> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2, H3 {
+    default <H1 extends Exception, H2 extends Exception, H3 extends Exception> boolean traverse(Executable1Throwing3<? super TraverseSupport.Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2, ? extends H3> traverse, Association<?, ?, ?> ctx) throws E, H1, H2, H3 {
         try { return traverse(TRAVERSE, traverse::exec, ctx); } catch (Exception ex) { return sneak(ex); } }
 
     /**
@@ -775,7 +775,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException {@inheritDoc}
      */
     @Override
-    default <H1 extends Exception, H2 extends Exception, H3 extends Exception> boolean parallel(Executable1Throwing3<? super TraverseSupport.Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2, ? extends H3> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2, H3 {
+    default <H1 extends Exception, H2 extends Exception, H3 extends Exception> boolean parallel(Executable1Throwing3<? super TraverseSupport.Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2, ? extends H3> traverse, Association<?, ?, ?> ctx) throws E, H1, H2, H3 {
         try { return traverse(PARALLEL, traverse::exec, ctx); } catch (Exception ex) { return sneak(ex); } }
 
 
@@ -1065,7 +1065,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
          * @throws E in case of the traversal error
          * @throws H in case of the resolution error
          */
-        R resolve(TraverseMethod method, TraverseSupport<? extends V, ? extends E> traversable, Association<Object, Object, ?> ctx) throws E, H;
+        R resolve(TraverseMethod method, TraverseSupport<? extends V, ? extends E> traversable, Association<?, ?, ?> ctx) throws E, H;
     }
 
 
@@ -1401,7 +1401,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      */
     static <V, E extends Exception> Traversable<V, E> sequence(TraverseSupport<? extends V, ? extends E> traverseSupport) {
         requireNonNull(traverseSupport); return new Traversable<>() {
-            public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+            public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
                 return (method.isTraverse() ? SEQUENCE : method).traverse(traverseSupport, traverse, ctx); }
         };
     }
@@ -1417,7 +1417,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      */
     static <V, E extends Exception> Traversable<V, E> parallel(TraverseSupport<? extends V, ? extends E> traverseSupport) {
         requireNonNull(traverseSupport); return new Traversable<>() {
-            public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+            public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
                 return (method.isTraverse() ? PARALLEL : method).traverse(traverseSupport, traverse, ctx); }
         };
     }
@@ -1432,7 +1432,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      */
     static <V, E extends Exception> Traversable<V, E> traversable() {
         return new Traversable<>() {
-            public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+            public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
                 return traverse.complete(traverser()); }
         };
     }
@@ -1448,7 +1448,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      */
     static <V, E extends Exception> Traversable<V, E> traversable(TraverseSupport<? extends V, ? extends E> traverseSupport) {
         requireNonNull(traverseSupport); return new Traversable<>() {
-            public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+            public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
                 return method.traverse(traverseSupport, traverse, ctx); }
         };
     }
@@ -1461,7 +1461,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @return a new {@link Association} context based on the given key and value
      * @throws NullPointerException if the provided key or value is {@code null}
      */
-    static Association<Object, Object, ?> context(Object key, Object value) {
+    static Association<?, ?, ?> context(Object key, Object value) {
         return context(pair(key, value));
     }
 
@@ -1472,11 +1472,11 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @return a new {@link Association} context created from the specified {@link KeyValue} entries
      * @throws NullPointerException if the key or value in any of the specified entries is {@code null}
      */
-    static Association<Object, Object, ?> context(KeyValue<?, ?>... kvs) {
+    static Association<?, ?, ?> context(KeyValue<?, ?>... kvs) {
         if (kvs.length > NEST_MAX_SIZE)
             return SnapContext.context(kvs);
 
-        Association<Object, Object, ?> context = NestContext.context();
+        Association<?, ?, ?> context = NestContext.context();
         for (KeyValue<?, ?> kv : kvs)
             context = NestContext.context(context, kv.getKey(), kv.getValue());
 
@@ -1492,7 +1492,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @return a new {@link Association} context with the added entry
      * @throws NullPointerException if the given {@link Association} context, key, or value is {@code null}
      */
-    static Association<Object, Object, ?> set(Association<Object, Object, ?> context, Object key, Object value) {
+    static Association<?, ?, ?> set(Association<?, ?, ?> context, Object key, Object value) {
         return context.size() >= NEST_MAX_SIZE ? SnapContext.context(context, key, value)
                 : NestContext.context(context, key, value);
     }
@@ -1505,7 +1505,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @return a new {@link Association} context with the entry deleted based on the given key
      * @throws NullPointerException if the given {@link Association} context or key is {@code null}
      */
-    static Association<Object, Object, ?> delete(Association<Object, Object, ?> context, Object key) {
+    static Association<?, ?, ?> delete(Association<?, ?, ?> context, Object key) {
         return context.size() >= NEST_MAX_SIZE ? SnapContext.context(context, key)
                 : NestContext.context(context, key);
     }

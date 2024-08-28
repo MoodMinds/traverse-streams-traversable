@@ -25,7 +25,7 @@ public class ContextTraversable<V, E extends Exception> implements Traversable<V
     /**
      * The {@link Association} traversal context modification function holder field.
      */
-    private final BiConsumer<Association<Object, Object, ?>, Context> contextWrite;
+    private final BiConsumer<Association<?, ?, ?>, Context> contextWrite;
 
     /**
      * Construct the object with the given {@link TraverseSupport} source
@@ -36,14 +36,14 @@ public class ContextTraversable<V, E extends Exception> implements Traversable<V
      * @throws NullPointerException if the given {@link TraverseSupport} source
      * or the {@link Association} traversal context modification function is {@code null}
      */
-    protected ContextTraversable(TraverseSupport<? extends V, ? extends E> traversable, BiConsumer<Association<Object, Object, ?>, Context> contextWrite) {
+    protected ContextTraversable(TraverseSupport<? extends V, ? extends E> traversable, BiConsumer<Association<?, ?, ?>, Context> contextWrite) {
         this.traversable = requireNonNull(traversable); this.contextWrite = requireNonNull(contextWrite);
     }
 
     @Override
-    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
 
-        Variable<Association<Object, Object, ?>> context = var(ctx); contextWrite.accept(ctx, new Context() {
+        Variable<Association<?, ?, ?>> context = var(ctx); contextWrite.accept(ctx, new Context() {
 
             @Override public Context set(Object key, Object value) {
                 context.val = Traversable.set(context.val, key, value); return this; }
@@ -94,7 +94,7 @@ public class ContextTraversable<V, E extends Exception> implements Traversable<V
      * @throws NullPointerException if the given {@link TraverseSupport} source
      * or the {@link Association} traversal context modification function is {@code null}
      */
-    public static <V, E extends Exception> Traversable<V, E> context(TraverseSupport<? extends V, ? extends E> traversable, BiConsumer<Association<Object, Object, ?>, Context> contextWrite) {
+    public static <V, E extends Exception> Traversable<V, E> context(TraverseSupport<? extends V, ? extends E> traversable, BiConsumer<Association<?, ?, ?>, Context> contextWrite) {
         return new ContextTraversable<>(traversable, contextWrite);
     }
 }

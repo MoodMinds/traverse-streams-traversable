@@ -53,7 +53,7 @@ public class SupplyTraversable<V, E extends Exception> extends StreamTraversable
     }
 
     @Override
-    protected Stream<V> stream(TraverseMethod method, Association<Object, Object, ?> ctx) throws E {
+    protected Stream<V> stream(TraverseMethod method, Association<?, ?, ?> ctx) throws E {
         return times == null ? Stream.generate(() -> {
             try { return evaluable.eval(); }
             catch (Exception ex) { return sneak(ex); }

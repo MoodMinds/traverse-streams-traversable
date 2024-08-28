@@ -18,7 +18,7 @@ public class DeferTraversable<V, E extends Exception> implements Traversable<V, 
     /**
      * The actual {@link TraverseSupport} source supplier holder field.
      */
-    private final Evaluable1Throwing1<? super Association<Object, Object, ?>, ? extends TraverseSupport<? extends V, ? extends E>, ? extends E> defer;
+    private final Evaluable1Throwing1<? super Association<?, ?, ?>, ? extends TraverseSupport<? extends V, ? extends E>, ? extends E> defer;
 
     /**
      * Construct the object with the given {@link EvaluableThrowing1}
@@ -38,12 +38,12 @@ public class DeferTraversable<V, E extends Exception> implements Traversable<V, 
      * @param defer the given {@link Evaluable1Throwing1} supplier of an actual {@link TraverseSupport} source
      * @throws NullPointerException if the given {@link Evaluable1Throwing1} supplier is {@code null}
      */
-    protected DeferTraversable(Evaluable1Throwing1<? super Association<Object, Object, ?>, ? extends TraverseSupport<? extends V, ? extends E>, ? extends E> defer) {
+    protected DeferTraversable(Evaluable1Throwing1<? super Association<?, ?, ?>, ? extends TraverseSupport<? extends V, ? extends E>, ? extends E> defer) {
         this.defer = requireNonNull(defer);
     }
 
     @Override
-    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
         return method.traverse(defer.eval(ctx), traverse, ctx);
     }
 
@@ -74,7 +74,7 @@ public class DeferTraversable<V, E extends Exception> implements Traversable<V, 
      * {@link TraverseSupport} source using a retrieval {@link Evaluable1Throwing1} supplier
      * @throws NullPointerException if the given {@link Evaluable1Throwing1} supplier is {@code null}
      */
-    public static <V, E extends Exception> Traversable<V, E> defer(Evaluable1Throwing1<? super Association<Object, Object, ?>, ? extends TraverseSupport<? extends V, ? extends E>, ? extends E> defer) {
+    public static <V, E extends Exception> Traversable<V, E> defer(Evaluable1Throwing1<? super Association<?, ?, ?>, ? extends TraverseSupport<? extends V, ? extends E>, ? extends E> defer) {
         return new DeferTraversable<>(defer);
     }
 }

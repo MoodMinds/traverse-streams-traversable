@@ -16,9 +16,9 @@ public enum TraverseMethod {
      * Represents a set of 'sequence' methods.
      */
     SEQUENCE {
-        @Override public <V, E extends Exception, H1 extends Exception, H2 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing2<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+        @Override public <V, E extends Exception, H1 extends Exception, H2 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing2<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
             return traverseSupport.sequence(traverse, ctx); }
-        @Override public <V, E extends Exception, H1 extends Exception, H2 extends Exception, H3 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing3<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2, ? extends H3> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2, H3 {
+        @Override public <V, E extends Exception, H1 extends Exception, H2 extends Exception, H3 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing3<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2, ? extends H3> traverse, Association<?, ?, ?> ctx) throws E, H1, H2, H3 {
             return traverseSupport.sequence(traverse, ctx); }
     },
 
@@ -26,9 +26,9 @@ public enum TraverseMethod {
      * Represents a set of 'traverse' methods.
      */
     TRAVERSE {
-        @Override public <V, E extends Exception, H1 extends Exception, H2 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing2<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+        @Override public <V, E extends Exception, H1 extends Exception, H2 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing2<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
             return traverseSupport.traverse(traverse, ctx); }
-        @Override public <V, E extends Exception, H1 extends Exception, H2 extends Exception, H3 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing3<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2, ? extends H3> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2, H3 {
+        @Override public <V, E extends Exception, H1 extends Exception, H2 extends Exception, H3 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing3<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2, ? extends H3> traverse, Association<?, ?, ?> ctx) throws E, H1, H2, H3 {
             return traverseSupport.traverse(traverse, ctx); }
     },
 
@@ -36,9 +36,9 @@ public enum TraverseMethod {
      * Represents a set of 'parallel' methods.
      */
     PARALLEL {
-        @Override public <V, E extends Exception, H1 extends Exception, H2 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing2<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+        @Override public <V, E extends Exception, H1 extends Exception, H2 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing2<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
             return traverseSupport.parallel(traverse, ctx); }
-        @Override public <V, E extends Exception, H1 extends Exception, H2 extends Exception, H3 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing3<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2, ? extends H3> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2, H3 {
+        @Override public <V, E extends Exception, H1 extends Exception, H2 extends Exception, H3 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing3<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2, ? extends H3> traverse, Association<?, ?, ?> ctx) throws E, H1, H2, H3 {
             return traverseSupport.parallel(traverse, ctx); }
     };
 
@@ -87,7 +87,7 @@ public enum TraverseMethod {
      * @throws NullPointerException if the specified traverse function is {@code null} or {@link Association}
      * contains {@code null} keys or values
      */
-    public abstract <V, E extends Exception, H1 extends Exception, H2 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing2<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2;
+    public abstract <V, E extends Exception, H1 extends Exception, H2 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing2<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2;
 
     /**
      * Try to traverse the given {@link TraverseSupport} with the given {@link Executable1Throwing3} traverse function
@@ -113,5 +113,5 @@ public enum TraverseMethod {
      * @throws NullPointerException if the specified traverse function is {@code null} or {@link Association}
      * contains {@code null} keys or values
      */
-    public abstract <V, E extends Exception, H1 extends Exception, H2 extends Exception, H3 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing3<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2, ? extends H3> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2, H3;
+    public abstract <V, E extends Exception, H1 extends Exception, H2 extends Exception, H3 extends Exception> boolean traverse(TraverseSupport<? extends V, ? extends E> traverseSupport, Executable1Throwing3<? super Traverser<? extends V, ? extends E>, ? extends H1, ? extends H2, ? extends H3> traverse, Association<?, ?, ?> ctx) throws E, H1, H2, H3;
 }

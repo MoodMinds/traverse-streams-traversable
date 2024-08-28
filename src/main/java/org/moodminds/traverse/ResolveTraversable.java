@@ -42,7 +42,7 @@ public class ResolveTraversable<V, E extends Exception, R> extends StreamTravers
     }
 
     @Override
-    protected Stream<R> stream(TraverseMethod method, Association<Object, Object, ?> ctx) throws E {
+    protected Stream<R> stream(TraverseMethod method, Association<?, ?, ?> ctx) throws E {
         return Stream.of(traversable).map(tr -> {
             try { return resolver.resolve(method, tr, ctx); }
             catch (Exception ex) { return sneak(ex); }

@@ -39,7 +39,7 @@ public abstract class StreamTraversable<V, E extends Exception> implements Trave
     protected StreamTraversable() {}
 
     @Override
-    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
 
         Set<Throwable> thrown = null;
 
@@ -57,7 +57,7 @@ public abstract class StreamTraversable<V, E extends Exception> implements Trave
         }
     }
 
-    protected abstract BaseStream<V, ?> stream(TraverseMethod method, Association<Object, Object, ?> ctx) throws E;
+    protected abstract BaseStream<V, ?> stream(TraverseMethod method, Association<?, ?, ?> ctx) throws E;
 
     private <H1 extends Exception, H2 extends Exception> boolean sequence(Spliterator<V> spliterator, Traverse<V, E, ? extends H1, ? extends H2> traverse,
                                                                           Executable1<? super Throwable> thrown) throws H1, H2 {
@@ -157,7 +157,7 @@ public abstract class StreamTraversable<V, E extends Exception> implements Trave
      */
     public static <V, E extends Exception> Traversable<V, E> stream(EvaluableThrowing1<? extends BaseStream<V, ?>, ? extends E> streamable) {
         requireNonNull(streamable); return new StreamTraversable<>() {
-            @Override protected BaseStream<V, ?> stream(TraverseMethod method, Association<Object, Object, ?> ctx) throws E {
+            @Override protected BaseStream<V, ?> stream(TraverseMethod method, Association<?, ?, ?> ctx) throws E {
                 return streamable.eval(); }
         };
     }

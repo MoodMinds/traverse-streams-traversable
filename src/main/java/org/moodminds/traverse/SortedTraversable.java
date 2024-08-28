@@ -44,7 +44,7 @@ public class SortedTraversable<V, E extends Exception> extends StreamTraversable
     }
 
     @Override
-    protected Stream<V> stream(TraverseMethod method, Association<Object, Object, ?> ctx) throws E {
+    protected Stream<V> stream(TraverseMethod method, Association<?, ?, ?> ctx) throws E {
         Resolver<V, E, List<V>, E> resolver = reduce(toList());
         List<V> collection = resolver.resolve(method, traversable, ctx);
         collection.sort(comparator); return collection.stream();

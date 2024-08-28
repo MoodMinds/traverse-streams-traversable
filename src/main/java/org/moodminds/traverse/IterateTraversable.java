@@ -63,7 +63,7 @@ public class IterateTraversable<V, E extends Exception> extends StreamTraversabl
     }
 
     @Override
-    protected Stream<V> stream(TraverseMethod method, Association<Object, Object, ?> ctx) throws E {
+    protected Stream<V> stream(TraverseMethod method, Association<?, ?, ?> ctx) throws E {
         return predicate == null ? Stream.iterate(init, seed(seed))
                 : Stream.iterate(init, predicate(predicate), seed(seed));
     }

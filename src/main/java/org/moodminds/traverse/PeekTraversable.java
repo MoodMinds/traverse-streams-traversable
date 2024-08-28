@@ -41,7 +41,7 @@ public class PeekTraversable<V, E extends Exception> implements Traversable<V, E
     }
 
     @Override
-    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
         return method.<V, E, H1, H2>traverse(traversable, traverser -> traverse.exec(new Traverser<>() {
             @Override public <X extends Exception> boolean next(Executable1Throwing1<? super V, ? extends X> consumer) throws E, X {
                 return traverser.next(peek(consumer, peeker)); }

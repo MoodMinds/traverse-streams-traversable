@@ -36,7 +36,7 @@ public class ExceptTraversable<V, E extends Exception> extends StreamTraversable
     }
 
     @Override
-    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
 
         Boolean thrown = var(false);
 
@@ -57,7 +57,7 @@ public class ExceptTraversable<V, E extends Exception> extends StreamTraversable
     }
 
     @Override
-    protected Stream<V> stream(TraverseMethod method, Association<Object, Object, ?> ctx) throws E {
+    protected Stream<V> stream(TraverseMethod method, Association<?, ?, ?> ctx) throws E {
         return Stream.of(exceptable).map(e -> {
             try { throw e.eval(); }
             catch (Exception ex) { return sneak(ex); }

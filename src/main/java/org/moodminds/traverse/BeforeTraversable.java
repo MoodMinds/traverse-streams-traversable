@@ -37,7 +37,7 @@ public class BeforeTraversable<V, E extends Exception> implements Traversable<V,
     }
 
     @Override
-    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+    public <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
         boolean complete = method.traverse(before, traverse, ctx);
         method.traverse(after, each(idle()), ctx); return complete;
     }

@@ -55,7 +55,7 @@ public class TakeTraversable<V, E extends Exception> extends BreachTraversable<V
     }
 
     @Override
-    protected <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, TraverseSupport<? extends V, ? extends E> traversable, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<Object, Object, ?> ctx) throws E, H1, H2 {
+    protected <H1 extends Exception, H2 extends Exception> boolean traverse(TraverseMethod method, TraverseSupport<? extends V, ? extends E> traversable, Traverse<V, E, ? extends H1, ? extends H2> traverse, Association<?, ?, ?> ctx) throws E, H1, H2 {
 
         Valuable.Boolean taken = method.isSequence() ? var(!predicate.test()) : vol(!predicate.test());
 
