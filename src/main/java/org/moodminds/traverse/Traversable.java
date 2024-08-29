@@ -1187,7 +1187,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
     static <V, E extends Exception, H extends Exception> Resolver<V, E, Container<V>, H> any(Testable1Throwing1<? super V, ? extends H> predicate) {
         requireNonNull(predicate); return (method, traversable, ctx) -> {
             Valuable<Container<V>> any = method.isSequence() ? var() : vol();
-            method.<V, E, E, H>traverse(traversable, traverser -> traverser.some(value -> {
+            method.traverse(traversable, some(value -> {
                 if (predicate.test(value)) {
                     any.let(null, container(value)); return false;
                 } else return true;
@@ -1211,7 +1211,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the given {@link Testable1Throwing1} predicate is {@code null}
      */
     static <V, E extends Exception, H extends Exception> Resolver<V, E, Boolean, H> anyMatch(Testable1Throwing1<? super V, ? extends H> predicate) {
-        requireNonNull(predicate); return (method, traversable, ctx) -> !method.<V, E, E, H>traverse(traversable, t -> t.some(predicate.not()), ctx);
+        requireNonNull(predicate); return (method, traversable, ctx) -> !method.<V, E, E, H>traverse(traversable, some(predicate.not()), ctx);
     }
 
     /**
@@ -1229,7 +1229,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the given {@link Testable1Throwing1} predicate is {@code null}
      */
     static <V, E extends Exception, H extends Exception> Resolver<V, E, Boolean, H> allMatch(Testable1Throwing1<? super V, ? extends H> predicate) {
-        requireNonNull(predicate); return (method, traversable, ctx) -> method.<V, E, E, H>traverse(traversable, t -> t.some(predicate), ctx);
+        requireNonNull(predicate); return (method, traversable, ctx) -> method.<V, E, E, H>traverse(traversable, some(predicate), ctx);
     }
 
     /**
