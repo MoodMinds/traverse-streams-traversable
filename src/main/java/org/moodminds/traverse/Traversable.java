@@ -1461,7 +1461,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @return a new {@link Association} context based on the given key and value
      * @throws NullPointerException if the provided key or value is {@code null}
      */
-    static Association<?, ?, ?> context(Object key, Object value) {
+    static Association<Object, Object, ?> context(Object key, Object value) {
         return context(pair(key, value));
     }
 
@@ -1472,11 +1472,11 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @return a new {@link Association} context created from the specified {@link KeyValue} entries
      * @throws NullPointerException if the key or value in any of the specified entries is {@code null}
      */
-    static Association<?, ?, ?> context(KeyValue<?, ?>... kvs) {
+    static Association<Object, Object, ?> context(KeyValue<?, ?>... kvs) {
         if (kvs.length > NEST_MAX_SIZE)
             return SnapContext.context(kvs);
 
-        Association<?, ?, ?> context = NestContext.context();
+        Association<Object, Object, ?> context = NestContext.context();
         for (KeyValue<?, ?> kv : kvs)
             context = NestContext.context(context, kv.getKey(), kv.getValue());
 
@@ -1492,7 +1492,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @return a new {@link Association} context with the added entry
      * @throws NullPointerException if the given {@link Association} context, key, or value is {@code null}
      */
-    static Association<?, ?, ?> set(Association<?, ?, ?> context, Object key, Object value) {
+    static Association<Object, Object, ?> set(Association<?, ?, ?> context, Object key, Object value) {
         return context.size() >= NEST_MAX_SIZE ? SnapContext.context(context, key, value)
                 : NestContext.context(context, key, value);
     }
@@ -1505,7 +1505,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @return a new {@link Association} context with the entry deleted based on the given key
      * @throws NullPointerException if the given {@link Association} context or key is {@code null}
      */
-    static Association<?, ?, ?> delete(Association<?, ?, ?> context, Object key) {
+    static Association<Object, Object, ?> delete(Association<?, ?, ?> context, Object key) {
         return context.size() >= NEST_MAX_SIZE ? SnapContext.context(context, key)
                 : NestContext.context(context, key);
     }
