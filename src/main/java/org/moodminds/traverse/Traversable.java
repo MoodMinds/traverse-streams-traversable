@@ -1188,9 +1188,8 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
         requireNonNull(predicate); return (method, traversable, ctx) -> {
             Valuable<Container<V>> any = method.isSequence() ? var() : vol();
             method.traverse(traversable, some(value -> {
-                if (predicate.test(value)) {
-                    any.let(null, container(value)); return false;
-                } else return true;
+                if (!predicate.test(value)) return true;
+                any.let(null, container(value)); return false;
             }), ctx);
             return requireNonNullElseGet(any.get(), HashContainer::container);
         };
