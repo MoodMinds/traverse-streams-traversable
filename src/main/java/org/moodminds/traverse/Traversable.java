@@ -183,7 +183,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      *                              have {@code null} keys or values
      */
     default <H extends Exception> boolean sequence(Traverse<V, E, ? extends E, ? extends H> traverse, KeyValue<?, ?>... ctx) throws E, H {
-        return this.<E, H>traverse(SEQUENCE, traverse, ctx);
+        return traverse(SEQUENCE, traverse, ctx);
     }
 
     /**
@@ -204,7 +204,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      *                              contains {@code null} keys or values
      */
     default <H extends Exception> boolean sequence(Traverse<V, E, ? extends E, ? extends H> traverse, Association<?, ?, ?> ctx) throws E, H {
-        return this.<E, H>traverse(SEQUENCE, traverse, ctx);
+        return traverse(SEQUENCE, traverse, ctx);
     }
 
 
@@ -334,7 +334,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      *                              have {@code null} keys or values
      */
     default <H extends Exception> boolean traverse(Traverse<V, E, ? extends E, ? extends H> traverse, KeyValue<?, ?>... ctx) throws E, H {
-        return this.<E, H>traverse(TRAVERSE, traverse, ctx);
+        return traverse(TRAVERSE, traverse, ctx);
     }
 
     /**
@@ -355,7 +355,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      *                              contains {@code null} keys or values
      */
     default <H extends Exception> boolean traverse(Traverse<V, E, ? extends E, ? extends H> traverse, Association<?, ?, ?> ctx) throws E, H {
-        return this.<E, H>traverse(TRAVERSE, traverse, ctx);
+        return traverse(TRAVERSE, traverse, ctx);
     }
 
 
@@ -486,7 +486,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      *                              have {@code null} keys or values
      */
     default <H extends Exception> boolean parallel(Traverse<V, E, ? extends E, ? extends H> traverse, KeyValue<?, ?>... ctx) throws E, H {
-        return this.<E, H>traverse(PARALLEL, traverse, ctx);
+        return traverse(PARALLEL, traverse, ctx);
     }
 
     /**
@@ -507,7 +507,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      *                              contains {@code null} keys or values
      */
     default <H extends Exception> boolean parallel(Traverse<V, E, ? extends E, ? extends H> traverse, Association<?, ?, ?> ctx) throws E, H {
-        return this.<E, H>traverse(PARALLEL, traverse, ctx);
+        return traverse(PARALLEL, traverse, ctx);
     }
 
     /**
