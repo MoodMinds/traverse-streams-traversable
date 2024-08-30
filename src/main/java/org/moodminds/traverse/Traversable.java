@@ -1050,6 +1050,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @param <V> the type of item values
      * @param <E> the type of traversal exception
      * @param <R> the type of the resolution result
+     * @param <H> the type of resolution exception
      */
     @FunctionalInterface
     interface Resolver<V, E extends Exception, R, H extends Exception> {
