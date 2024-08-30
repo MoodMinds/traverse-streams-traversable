@@ -1211,7 +1211,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the given {@link Testable1Throwing1} predicate is {@code null}
      */
     static <V, E extends Exception, H extends Exception> Resolver<V, E, Boolean, H> anyMatch(Testable1Throwing1<? super V, ? extends H> predicate) {
-        requireNonNull(predicate); return (method, traversable, ctx) -> !method.traverse(traversable, some(predicate.not()), ctx);
+        requireNonNull(predicate); return (method, traversable, ctx) -> !method.<V, E, E, H>traverse(traversable, some(predicate.not()), ctx);
     }
 
     /**
@@ -1229,7 +1229,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the given {@link Testable1Throwing1} predicate is {@code null}
      */
     static <V, E extends Exception, H extends Exception> Resolver<V, E, Boolean, H> allMatch(Testable1Throwing1<? super V, ? extends H> predicate) {
-        requireNonNull(predicate); return (method, traversable, ctx) -> method.traverse(traversable, some(predicate), ctx);
+        requireNonNull(predicate); return (method, traversable, ctx) -> method.<V, E, E, H>traverse(traversable, some(predicate), ctx);
     }
 
     /**
@@ -1476,7 +1476,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
         if (kvs.length > NEST_MAX_SIZE)
             return SnapContext.context(kvs);
 
-        Association<Object, Object, ?> context = NestContext.context();
+        NestContext context = NestContext.context();
         for (KeyValue<?, ?> kv : kvs)
             context = NestContext.context(context, kv.getKey(), kv.getValue());
 
