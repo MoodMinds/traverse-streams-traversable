@@ -1500,7 +1500,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @return a new {@link Association} context with the added entry
      * @throws NullPointerException if the given {@link Association} context, key, or value is {@code null}
      */
-    static Association<Object, Object, ?> set(Association<?, ?, ?> context, Object key, Object value) {
+    static Association<Object, Object, ?> put(Association<?, ?, ?> context, Object key, Object value) {
         return context.size() < 8 ? NestContext.context(context, key, value)
                 : SnapContext.context(context, key, value);
     }
@@ -1513,7 +1513,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @return a new {@link Association} context with the entry deleted based on the given key
      * @throws NullPointerException if the given {@link Association} context or key is {@code null}
      */
-    static Association<Object, Object, ?> delete(Association<?, ?, ?> context, Object key) {
+    static Association<Object, Object, ?> remove(Association<?, ?, ?> context, Object key) {
         return context.size() < 8 ? NestContext.context(context, key)
                 : SnapContext.context(context, key);
     }
