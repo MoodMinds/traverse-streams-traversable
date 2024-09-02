@@ -1210,7 +1210,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the given {@link Testable1Throwing1} predicate is {@code null}
      */
     static <V, E extends Exception, H extends Exception> Resolver<V, E, Boolean, H> anyMatch(Testable1Throwing1<? super V, ? extends H> predicate) {
-        requireNonNull(predicate); return (method, traversable, ctx) -> !method.<V, E, E, H>traverse(traversable, some(predicate.not()), ctx);
+        requireNonNull(predicate); return (method, traversable, ctx) -> !method.traverse(traversable, some(predicate.not()), ctx);
     }
 
     /**
@@ -1228,7 +1228,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the given {@link Testable1Throwing1} predicate is {@code null}
      */
     static <V, E extends Exception, H extends Exception> Resolver<V, E, Boolean, H> allMatch(Testable1Throwing1<? super V, ? extends H> predicate) {
-        requireNonNull(predicate); return (method, traversable, ctx) -> method.<V, E, E, H>traverse(traversable, some(predicate), ctx);
+        requireNonNull(predicate); return (method, traversable, ctx) -> method.traverse(traversable, some(predicate), ctx);
     }
 
     /**
