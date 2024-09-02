@@ -1318,9 +1318,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
         requireNonNull(reducer); return reduce(new Object() {
 
             Collector<V, List<V>, Container<V>> collector() {
-                return Collector.of(ArrayList::new, this::add, this::set, l -> Optional.of(l)
-                        .map(List::iterator).filter(Iterator::hasNext).map(Iterator::next)
-                        .map(HashContainer<V>::new).orElseGet(HashContainer<V>::new)); }
+                return Collector.of(ArrayList::new, this::add, this::set, this::finish); }
 
             List<V> set(List<V> list1, List<V> list2) {
                 if (!list2.isEmpty())
@@ -1331,6 +1329,11 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
                 if (list.isEmpty()) list.add(value);
                 else try { list.set(0, reducer.eval(list.get(0), value)); }
                     catch (Exception e) { sneak(e); } }
+
+            Container<V> finish(List<V> l) {
+                return Optional.of(l).map(List::iterator).filter(Iterator::hasNext)
+                        .map(Iterator::next).map(HashContainer<V>::new)
+                        .orElseGet(HashContainer<V>::new); }
 
         }.collector());
     }
@@ -1373,7 +1376,10 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
         requireNonNull(mapper); requireNonNull(reducer); return reduce(new Object() {
 
             Collector<S, Object[], V> collector() {
-                return Collector.of(() -> new Object[]{init}, this::add, this::set, a -> cast(a[0])); }
+                return Collector.of(this::init, this::add, this::set, this::finish); }
+
+            Object[] init() {
+                return new Object[]{init}; }
 
             void add(Object[] array, S value) {
                 try { put(array, mapper.eval(value)); }
@@ -1385,6 +1391,9 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
             void put(Object[] array, V value) {
                 try { array[0] = reducer.eval(cast(array[0]), value); }
                 catch (Exception e) { sneak(e); } }
+
+            V finish(Object[] array) {
+                return cast(array[0]); }
 
         }.collector());
     }
@@ -1492,8 +1501,8 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the given {@link Association} context, key, or value is {@code null}
      */
     static Association<Object, Object, ?> set(Association<?, ?, ?> context, Object key, Object value) {
-        return context.size() >= 8 ? SnapContext.context(context, key, value)
-                : NestContext.context(context, key, value);
+        return context.size() < 8 ? NestContext.context(context, key, value)
+                : SnapContext.context(context, key, value);
     }
 
     /**
@@ -1505,7 +1514,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the given {@link Association} context or key is {@code null}
      */
     static Association<Object, Object, ?> delete(Association<?, ?, ?> context, Object key) {
-        return context.size() >= 8 ? SnapContext.context(context, key)
-                : NestContext.context(context, key);
+        return context.size() < 8 ? NestContext.context(context, key)
+                : SnapContext.context(context, key);
     }
 }
