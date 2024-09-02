@@ -45,7 +45,6 @@ a boolean flag indicating the presence of a value in the source (`anyMatch`, `al
 ```java
 import org.moodminds.elemental.Container;
 import org.moodminds.traverse.Traversable;
-import org.moodminds.traverse.UniqueTraversable;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -148,7 +147,7 @@ public class Sample {
         Traversable<Character, Exception> tr21 = skip(tr20, 3);
         Traversable<Character, Exception> tr22 = take(tr21, c -> c != 'G');
         Traversable<Character, Exception> tr23 = drop(tr22, c -> c != 'D');
-        Traversable<Character, Exception> tr24 = context(tr23, (ctx, write) -> write.set("v", 23).delete("t"));
+        Traversable<Character, Exception> tr24 = context(tr23, (ctx, write) -> write.put("v", 23).remove("t"));
         Traversable<Character, Exception> tr25 = retry(tr24, 2);
         Traversable<Character, Exception> tr26 = resume(tr25, t ->
                 stream(() -> t.getMessage().chars().mapToObj(i -> (char) i)));
