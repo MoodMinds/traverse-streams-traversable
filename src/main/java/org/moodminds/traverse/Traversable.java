@@ -44,7 +44,6 @@ import static org.moodminds.function.Evaluable1Throwing1.identity;
 import static org.moodminds.sneaky.Cast.cast;
 import static org.moodminds.sneaky.Sneak.sneak;
 import static org.moodminds.traverse.TraverseMethod.*;
-import static org.moodminds.traverse.context.NestContext.NEST_MAX_SIZE;
 import static org.moodminds.valuable.Variable.var;
 import static org.moodminds.function.Executable1.idle;
 import static org.moodminds.valuable.Volatile.vol;
@@ -1473,7 +1472,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the key or value in any of the specified entries is {@code null}
      */
     static Association<Object, Object, ?> context(KeyValue<?, ?>... kvs) {
-        if (kvs.length > NEST_MAX_SIZE)
+        if (kvs.length > 8)
             return SnapContext.context(kvs);
 
         NestContext context = NestContext.context();
@@ -1493,7 +1492,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the given {@link Association} context, key, or value is {@code null}
      */
     static Association<Object, Object, ?> set(Association<?, ?, ?> context, Object key, Object value) {
-        return context.size() >= NEST_MAX_SIZE ? SnapContext.context(context, key, value)
+        return context.size() >= 8 ? SnapContext.context(context, key, value)
                 : NestContext.context(context, key, value);
     }
 
@@ -1506,7 +1505,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if the given {@link Association} context or key is {@code null}
      */
     static Association<Object, Object, ?> delete(Association<?, ?, ?> context, Object key) {
-        return context.size() >= NEST_MAX_SIZE ? SnapContext.context(context, key)
+        return context.size() >= 8 ? SnapContext.context(context, key)
                 : NestContext.context(context, key);
     }
 }

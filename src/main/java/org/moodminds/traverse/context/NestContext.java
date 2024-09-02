@@ -33,8 +33,6 @@ public class NestContext extends AbstractAssociation<Object, Object, KeyValue<Ob
 
     private static final long serialVersionUID = 2128953923580688463L;
 
-    public static final int NEST_MAX_SIZE = 8;
-
     /**
      * A {@link Delta} holder field.
      */
