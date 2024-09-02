@@ -45,11 +45,11 @@ public class ContextTraversable<V, E extends Exception> implements Traversable<V
 
         Variable<Association<?, ?, ?>> context = var(ctx); contextWrite.accept(ctx, new Context() {
 
-            @Override public Context set(Object key, Object value) {
-                context.val = Traversable.set(context.val, key, value); return this; }
+            @Override public Context put(Object key, Object value) {
+                context.val = Traversable.put(context.val, key, value); return this; }
 
-            @Override public Context delete(Object key) {
-                context.val = Traversable.delete(context.val, key); return this; }
+            @Override public Context remove(Object key) {
+                context.val = Traversable.remove(context.val, key); return this; }
 
         }); return method.traverse(traversable, traverse, context.val);
     }
@@ -61,14 +61,14 @@ public class ContextTraversable<V, E extends Exception> implements Traversable<V
     public interface Context {
 
         /**
-         * Set the given variable value to the context.
+         * Put the given variable value to the context.
          *
          * @param key the given key of the value
          * @param value the given value to set
          * @return the self-instance
          * @throws NullPointerException if the given key or value is {@code null}
          */
-        Context set(Object key, Object value);
+        Context put(Object key, Object value);
 
         /**
          * Remove the given variable from the context.
@@ -77,7 +77,7 @@ public class ContextTraversable<V, E extends Exception> implements Traversable<V
          * @return the self-instance
          * @throws NullPointerException if the given key is {@code null}
          */
-        Context delete(Object key);
+        Context remove(Object key);
     }
 
 
