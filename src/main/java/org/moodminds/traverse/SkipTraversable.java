@@ -41,7 +41,7 @@ public class SkipTraversable<V, E extends Exception> extends FilterTraversable<V
 
         Long counter = method.isSequence() ? var(0L) : vol(0L); Valuable<Testable1Throwing1<? super V, ? extends E>> skip;
 
-        (skip = method.isSequence() ? var() : vol()).put(__ -> {
+        (skip = method.isSequence() ? var() : vol()).put(unused -> {
             if (counter.incr() <= number) return false;
             else { skip.put(anyway()); return true; }
         });

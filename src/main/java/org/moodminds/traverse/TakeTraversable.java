@@ -95,7 +95,7 @@ public class TakeTraversable<V, E extends Exception> extends BreachTraversable<V
      * @throws NullPointerException if the source {@link TraverseSupport} or the predicate is {@code null}
      */
     public static <V, E extends Exception> Traversable<V, E> take(TraverseSupport<? extends V, ? extends E> traversable, TestableThrowing1<? extends E> predicate) {
-        return take(traversable, predicate, __ -> predicate.test(), false);
+        return take(traversable, predicate, unused -> predicate.test(), false);
     }
 
     /**

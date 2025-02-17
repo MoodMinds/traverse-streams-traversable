@@ -1289,7 +1289,7 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
 
                 method.traverse(traversable, traverser -> {
                     Thread thread = currentThread();
-                    A result = results.computeIfAbsent(thread, __ -> supplier.get());
+                    A result = results.computeIfAbsent(thread, unused -> supplier.get());
                     traverser.each(value -> accumulator.accept(result, value));
                     places.put(thread, place.incr());
                 }, ctx);

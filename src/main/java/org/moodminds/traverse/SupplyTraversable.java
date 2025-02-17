@@ -3,11 +3,11 @@ package org.moodminds.traverse;
 import org.moodminds.elemental.Association;
 import org.moodminds.function.EvaluableThrowing1;
 
-import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.LongStream.range;
 import static org.moodminds.sneaky.Sneak.sneak;
 
 /**
@@ -57,7 +57,7 @@ public class SupplyTraversable<V, E extends Exception> extends StreamTraversable
         return times == null ? Stream.generate(() -> {
             try { return evaluable.eval(); }
             catch (Exception ex) { return sneak(ex); }
-        }) : LongStream.range(0, times).mapToObj(__ -> {
+        }) : range(0, times).mapToObj(unused -> {
             try { return evaluable.eval(); }
             catch (Exception ex) { return sneak(ex); }
         });
