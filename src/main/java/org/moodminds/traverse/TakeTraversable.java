@@ -61,24 +61,21 @@ public class TakeTraversable<V, E extends Exception> extends BreachTraversable<V
 
         return method.<V, E, H1, H2>traverse(traversable, traverser -> traverse.exec(new Traverser<>() {
 
-            @Override
-            public <H extends Exception> boolean next(Executable1Throwing1<? super V, ? extends H> consumer) throws E, H {
+            @Override public <H extends Exception> boolean next(Executable1Throwing1<? super V, ? extends H> consumer) throws E, H {
                 requireNonNull(consumer); Boolean fulfilled = var(false); return !taken.get() && traverser.<E, H>next(value -> {
                     if (valuePredicate.test(value) || !taken.set(true) && inclusive) {
                         fulfilled.flg = true; consumer.exec(value); }
-                }) && fulfilled.flg;
-            }
+                }) && fulfilled.flg; }
 
-            @Override
-            public <H extends Exception> boolean some(Testable1Throwing1<? super V, ? extends H> consumer) throws E, H {
+            @Override public <H extends Exception> boolean some(Testable1Throwing1<? super V, ? extends H> consumer) throws E, H {
                 requireNonNull(consumer); Boolean fulfilled = var(false); return !taken.get() && traverser.<E, H>some(value -> {
                     if (valuePredicate.test(value))
                         return taken.get() ? (fulfilled.flg = false) : (fulfilled.flg = true) && consumer.test(value);
                     if (!taken.set(true) && inclusive) {
                         fulfilled.flg = !consumer.test(value); return false;
                     } return fulfilled.flg = false;
-                }) && fulfilled.flg;
-            }
+                }) && fulfilled.flg; }
+
         }), ctx);
     }
 
