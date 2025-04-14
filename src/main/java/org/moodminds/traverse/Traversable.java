@@ -1269,7 +1269,39 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      * @throws NullPointerException if {@code collector} is {@code null}
      */
     static <V, E extends Exception, R, H extends Exception> Resolver<V, E, R, H> reduce(Collector<? super V, ?, ? extends R> collector) {
-        return reducing(collector);
+        requireNonNull(collector); return new Object() {
+            private <A> Resolver<V, E, R, H> reducing(Collector<? super V, A, ? extends R> collector) {
+                return (method, traversable, ctx) -> {
+
+                    Supplier<A> supplier = requireNonNull(collector.supplier());
+                    BinaryOperator<A> combiner = requireNonNull(collector.combiner());
+                    Function<A, ? extends R> finisher = requireNonNull(collector.finisher());
+                    BiConsumer<A, ? super V> accumulator = requireNonNull(collector.accumulator());
+
+                    if (method.isSequence() || collector.characteristics().contains(CONCURRENT)) {
+                        A result = supplier.get(); method.traverse(traversable, each(value -> accumulator.accept(result, value)), ctx);
+                        return finisher.apply(result);
+                    } else {
+                        Volatile.Int place = vol(0);
+
+                        ConcurrentMap<Thread, A> results = new ConcurrentHashMap<>();
+                        ConcurrentMap<Thread, Integer> places = new ConcurrentHashMap<>();
+
+                        method.traverse(traversable, traverser -> {
+                            Thread thread = currentThread();
+                            A result = results.computeIfAbsent(thread, unused -> supplier.get());
+                            traverser.each(value -> accumulator.accept(result, value));
+                            places.put(thread, place.incr());
+                        }, ctx);
+
+                        // any of the parallel threads' writes to intermediate accumulation
+                        // holder is flushed into the main memory i.e., happens-before we get here
+                        return finisher.apply(results.entrySet().stream().sorted(comparing(e -> places.get(e.getKey())))
+                                .map(Entry::getValue).reduce(combiner).orElseGet(supplier));
+                    }
+                };
+            };
+        }.reducing(collector);
     }
 
     /**
@@ -1486,58 +1518,5 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
     static Association<Object, Object, ?> remove(Association<?, ?, ?> context, Object key) {
         return context.size() < 8 ? NestContext.context(context, key)
                 : SnapContext.context(context, key);
-    }
-
-
-    /**
-     * Returns a {@link Resolver} that reduces the elements using the specified {@link Collector},
-     * handling parallel traversal scenarios explicitly.
-     * <p>
-     * When the traversal is explicitly sequential or the {@link Collector} has the
-     * {@link Collector.Characteristics#CONCURRENT CONCURRENT} characteristic, reduction occurs
-     * as expected. Otherwise, intermediate results ({@link A}) are accumulated per worker
-     * {@link Thread}, tracked by their completion order. The results are then sorted and
-     * combined in that order to increase the likelihood that the final combined result
-     * corresponds to the last emitted element, which is useful in last-seen element searches.
-     *
-     * @param collector the {@link Collector} used to accumulate and reduce elements
-     * @param <V>       the type of item values
-     * @param <E>       the type of traversal exception
-     * @param <A>       the intermediate accumulation type used by the {@link Collector}
-     * @param <R>       the type of the collecting result
-     * @param <H>       the type of resolution exception
-     * @return a {@link Resolver} that applies the specified {@link Collector}
-     * @throws NullPointerException if {@code collector} is {@code null}
-     */
-    private static <V, E extends Exception, A, R, H extends Exception> Resolver<V, E, R, H> reducing(Collector<? super V, A, ? extends R> collector) {
-        requireNonNull(collector); return (method, traversable, ctx) -> {
-
-            Supplier<A> supplier = requireNonNull(collector.supplier());
-            BinaryOperator<A> combiner = requireNonNull(collector.combiner());
-            Function<A, ? extends R> finisher = requireNonNull(collector.finisher());
-            BiConsumer<A, ? super V> accumulator = requireNonNull(collector.accumulator());
-
-            if (method.isSequence() || collector.characteristics().contains(CONCURRENT)) {
-                A result = supplier.get(); method.traverse(traversable, each(value -> accumulator.accept(result, value)), ctx);
-                return finisher.apply(result);
-            } else {
-                Volatile.Int place = vol(0);
-
-                ConcurrentMap<Thread, A> results = new ConcurrentHashMap<>();
-                ConcurrentMap<Thread, Integer> places = new ConcurrentHashMap<>();
-
-                method.traverse(traversable, traverser -> {
-                    Thread thread = currentThread();
-                    A result = results.computeIfAbsent(thread, unused -> supplier.get());
-                    traverser.each(value -> accumulator.accept(result, value));
-                    places.put(thread, place.incr());
-                }, ctx);
-
-                // any of the parallel threads' writes to intermediate accumulation
-                // holder is flushed into the main memory i.e., happens-before we get here
-                return finisher.apply(results.entrySet().stream().sorted(comparing(e -> places.get(e.getKey())))
-                        .map(Entry::getValue).reduce(combiner).orElseGet(supplier));
-            }
-        };
     }
 }
