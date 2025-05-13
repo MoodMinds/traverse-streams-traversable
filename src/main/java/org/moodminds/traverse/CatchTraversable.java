@@ -197,7 +197,7 @@ public abstract class CatchTraversable<V, C extends Exception, E extends Excepti
      * @throws NullPointerException if the specified {@link TraverseSupport} source is {@code null}
      */
     public static <V, E extends Exception> Traversable<V, E> retry(TraverseSupport<? extends V, ? extends E> traversable) {
-        return new RetryTraversable<V, E>(traversable) {
+        return new RetryTraversable<>(traversable) {
             @Override protected TestableThrowing1<? extends E> retrial() throws E { return anyway(); } };
     }
 
