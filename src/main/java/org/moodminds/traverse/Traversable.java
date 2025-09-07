@@ -1,9 +1,8 @@
 package org.moodminds.traverse;
 
 import org.moodminds.elemental.Association;
-import org.moodminds.elemental.Container;
-import org.moodminds.elemental.HashContainer;
 import org.moodminds.elemental.KeyValue;
+import org.moodminds.elemental.OptionalNullable;
 import org.moodminds.function.Evaluable1Throwing1;
 import org.moodminds.function.Evaluable2Throwing1;
 import org.moodminds.function.Executable1Throwing1;
@@ -18,12 +17,8 @@ import org.moodminds.valuable.Valuable;
 import org.moodminds.valuable.Variable;
 import org.moodminds.valuable.Volatile;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiConsumer;
@@ -31,6 +26,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
@@ -38,10 +34,11 @@ import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElseGet;
 import static java.util.stream.Collector.Characteristics.CONCURRENT;
-import static org.moodminds.elemental.HashContainer.container;
+
+import static org.moodminds.elemental.OptionalNullable.collector;
+import static org.moodminds.elemental.OptionalNullable.nullable;
 import static org.moodminds.elemental.Pair.pair;
 import static org.moodminds.function.Evaluable1Throwing1.identity;
-import static org.moodminds.sneaky.Cast.cast;
 import static org.moodminds.sneaky.Sneak.sneak;
 import static org.moodminds.traverse.TraverseMethod.*;
 import static org.moodminds.valuable.Variable.var;
@@ -1174,24 +1171,22 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
 
     /**
      * Return a {@link Resolver} that identifies the first element matching the provided {@link Testable1Throwing1} predicate
-     * and stores it in a {@link Container}.
+     * and stores it in a {@link OptionalNullable}.
      * <p>
      * This is a short-circuiting resolution operation.
      *
      * @param <V> the type of item values
      * @param <E> the type of traversal exception
      * @param <H> the type of resolution exception
-     * @return a {@link Resolver} that finds the first matching element and places it in a {@link Container}
+     * @return a {@link Resolver} that finds the first matching element and places it in a {@link OptionalNullable}
      * @throws NullPointerException if the provided {@link Testable1Throwing1} predicate is {@code null}
      */
-    static <V, E extends Exception, H extends Exception> Resolver<V, E, Container<V>, H> any(Testable1Throwing1<? super V, ? extends H> predicate) {
-        requireNonNull(predicate); return (method, traversable, ctx) -> {
-            Valuable<Container<V>> any = method.isSequence() ? var() : vol();
+    static <V, E extends Exception, H extends Exception> Resolver<V, E, OptionalNullable<V>, H> any(Testable1Throwing1<? super V, ? extends H> predicate) {
+        requireNonNull(predicate); return (method, traversable, ctx) -> { Valuable<OptionalNullable<V>> any = method.isSequence() ? var() : vol();
             method.traverse(traversable, some(value -> {
                 if (!predicate.test(value)) return true;
-                any.let(null, container(value)); return false;
-            }), ctx);
-            return requireNonNullElseGet(any.get(), HashContainer::container);
+                any.let(null, nullable(value)); return false;
+            }), ctx); return requireNonNullElseGet(any.get(), OptionalNullable::empty);
         };
     }
 
@@ -1306,38 +1301,20 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
 
     /**
      * Return a {@link Resolver} that performs a reduction operation using the specified
-     * {@link Evaluable2Throwing1} binary function and stores the result value in a {@link Container}.
+     * {@link Evaluable2Throwing1} binary function and stores the result value in a {@link OptionalNullable}.
      *
      * @param reducer the specified {@link Evaluable2Throwing1} binary function
      * @param <V> the type of item values
      * @param <E> the type of traversal exception
      * @param <H> the type of resolution exception
      * @return a {@link Resolver} that applies a reduction operation with the specified
-     * {@link Evaluable2Throwing1} binary function and stores the result values in a {@link Container}
+     * {@link Evaluable2Throwing1} binary function and stores the result values in a {@link OptionalNullable}
      * @throws NullPointerException if the provided {@link Evaluable2Throwing1} binary function is {@code null}
      */
-    static <V, E extends Exception, H extends Exception> Resolver<V, E, Container<V>, H> reduce(Evaluable2Throwing1<? super V, ? super V, ? extends V, ? extends H> reducer) {
-        requireNonNull(reducer); return reduce(new Object() {
-
-            Collector<V, List<V>, Container<V>> collector() {
-                return Collector.of(ArrayList::new, this::add, this::set, this::finish); }
-
-            List<V> set(List<V> list1, List<V> list2) {
-                if (!list2.isEmpty())
-                    add(list1, list2.get(0));
-                return list1; }
-
-            void add(List<V> list, V value) {
-                if (list.isEmpty()) list.add(value);
-                else try { list.set(0, reducer.eval(list.get(0), value)); }
-                    catch (Exception e) { sneak(e); } }
-
-            Container<V> finish(List<V> l) {
-                return Optional.of(l).map(List::iterator).filter(Iterator::hasNext)
-                        .map(Iterator::next).map(HashContainer<V>::new)
-                        .orElseGet(HashContainer<V>::new); }
-
-        }.collector());
+    static <V, E extends Exception, H extends Exception> Resolver<V, E, OptionalNullable<V>, H> reduce(Evaluable2Throwing1<? super V, ? super V, ? extends V, ? extends H> reducer) {
+        requireNonNull(reducer); return reduce(collector(Collectors.reducing((v1, v2) -> {
+            try { return reducer.eval(v1, v2); } catch (Exception e) { return sneak(e); }
+        })));
     }
 
     /**
@@ -1375,29 +1352,11 @@ public interface Traversable<V, E extends Exception> extends TraverseSupport<V, 
      */
     static <S, V, E extends Exception, H extends Exception> Resolver<S, E, V, H> reduce(V init, Evaluable1Throwing1<? super S, ? extends V, ? extends H> mapper,
                                                                                         Evaluable2Throwing1<? super V, ? super V, ? extends V, ? extends H> reducer) {
-        requireNonNull(mapper); requireNonNull(reducer); return reduce(new Object() {
-
-            Collector<S, Object[], V> collector() {
-                return Collector.of(this::init, this::add, this::set, this::finish); }
-
-            Object[] init() {
-                return new Object[]{init}; }
-
-            void add(Object[] array, S value) {
-                try { put(array, mapper.eval(value)); }
-                catch (Exception e) { sneak(e); } }
-
-            Object[] set(Object[] array1, Object[] array2) {
-                put(array1, cast(array2[0])); return array1; }
-
-            void put(Object[] array, V value) {
-                try { array[0] = reducer.eval(cast(array[0]), value); }
-                catch (Exception e) { sneak(e); } }
-
-            V finish(Object[] array) {
-                return cast(array[0]); }
-
-        }.collector());
+        requireNonNull(mapper); requireNonNull(reducer); return reduce(Collectors.reducing(init, s -> {
+            try { return mapper.eval(s); } catch (Exception e) { return sneak(e); }
+        }, (v1, v2) -> {
+            try { return reducer.eval(v1, v2); } catch (Exception e) { return sneak(e); }
+        }));
     }
 
     /**
