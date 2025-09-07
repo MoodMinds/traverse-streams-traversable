@@ -43,7 +43,7 @@ a boolean flag indicating the presence of a value in the source (`anyMatch`, `al
 ## Code Samples
 
 ```java
-import org.moodminds.elemental.Container;
+import org.moodminds.elemental.OptionalNullable;
 import org.moodminds.traverse.Traversable;
 
 import java.io.IOException;
@@ -116,7 +116,7 @@ public class Sample {
         Traversable<String, IOException> traversable = supply(this::item);
         String join = traversable.sequence(joining(", "));
         List<String> list = traversable.parallel(toList());
-        Container<String> any = traversable.traverse(any(s -> true));
+        OptionalNullable<String> any = traversable.traverse(any(s -> true));
         boolean anyMatch = traversable.sequence(anyMatch("a"::equals));
         boolean allMatch = traversable.traverse(allMatch("b"::equals));
         boolean noneMatch = traversable.parallel(noneMatch("c"::equals));
