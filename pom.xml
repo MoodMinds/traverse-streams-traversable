@@ -39,7 +39,13 @@
 
         <dependency>
             <groupId>org.moodminds.valuable</groupId>
-            <artifactId>valuable</artifactId>
+            <artifactId>valuable-variable</artifactId>
+            <version>0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.moodminds.valuable</groupId>
+            <artifactId>valuable-volatile</artifactId>
             <version>0.1</version>
         </dependency>
 
